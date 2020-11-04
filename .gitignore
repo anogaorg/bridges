@@ -105,3 +105,8 @@ dist
 
 # Output
 out/
+target/
+
+# IntelliJ
+.idea/
+.bsp
