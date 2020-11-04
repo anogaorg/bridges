@@ -8,10 +8,13 @@
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "axios": "^0.21.0",
+    "electron-log": "^4.3.0",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.0",
+    "tree-kill": "^1.2.2",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
@@ -22,7 +25,8 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "build": "npm-run-all rx-build start"
+    "server-build": "sbt clean assembly",
+    "build": "npm-run-all rx-build server-build start"
   },
   "eslintConfig": {
     "extends": [

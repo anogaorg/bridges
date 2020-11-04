@@ -3,6 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import axios from 'axios';
+
+
+axios.get(
+  "http://localhost:8080/users"
+)
+.then((data) => {
+  console.log(data.data);
+  console.log(data);
+}).catch((e) => {console.log("woops"); console.log(e);})
 
 ReactDOM.render(
   <React.StrictMode>
