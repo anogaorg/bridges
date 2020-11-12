@@ -11,6 +11,7 @@
     "axios": "^0.21.0",
     "electron-log": "^4.3.0",
     "electron-squirrel-startup": "^1.0.0",
+    "find-free-port": "^2.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.0",
@@ -26,7 +27,10 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "server-build": "sbt clean assembly",
-    "build": "npm-run-all rx-build server-build start"
+    "build": "npm-run-all remove-from-resources rx-build move-to-resources server-build start",
+    "move-to-resources": "mv -f build src/main/resources",
+    "remove-from-resources": "rm -rf src/main/resources/build",
+    "make-all": "npm-run-all remove-from-resources rx-build move-to-resources server-build make"
   },
   "eslintConfig": {
     "extends": [
@@ -59,9 +63,6 @@
     "forge": {
       "packagerConfig": {
         "ignore": [
-          "node_modules",
-          "public",
-          "src"
         ]
       },
       "makers": [

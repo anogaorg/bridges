@@ -1,11 +1,14 @@
 /*
 Remix of this setup https://github.com/wuruoyun/electron-vue-spring
 */
+const electron = require('electron');
 const path = require('path');
-const logger = require('./logger');
 const axios = require('axios');
+const logger = require('./logger');
+var findPort = require("find-free-port");
 
-const { app, BrowserWindow, dialog } = require('electron');
+
+const { app, BrowserWindow, dialog } = electron;
 const JAR = "bridges-service-*.jar";
 const MAX_CHECK_COUNT = 10;
 
@@ -30,33 +33,30 @@ function createWindow () {
   });
 }
 
-function startServer() {
-  logger.info(`Starting server ...`)
-
-  const server = `${path.join(app.getAppPath(), 'target', '**', JAR)}`; //TODO: confirm path value
+function startServer(port) {
+  logger.info(`Starting server ...`);
+  const server = `${path.join(app.getAppPath(), 'target', '**', JAR)}`;
+  
   logger.info(`Launching server with jar ${server} ...`);
-
   serverProcess = require('child_process')
-    .spawn('scala', [server], {shell: true});
+        .spawn('java', [`-Dservice.overridePort=${port}`, '-jar', server], {shell: true});
 
   serverProcess.stdout.on('data', logger.server);
 
   if (serverProcess.pid) {
-    //Hard coding this in for now
-    baseUrl = `http://localhost:8080`;
+    baseUrl = `http://localhost:${port}`;
+    process.env.PROJECT_BASE_URL = baseUrl;
     logger.info("Server PID: " + serverProcess.pid);
     checkCount = 0
     setTimeout(function cycle() {
       axios.get(`${baseUrl}`,
-      {validateStatus: function (status) {
-        return status >= 200 && status < 500; //Accept 400s as a workaround for now before implementing a real healthcheck
-      }}
-      )
+      //TODO Implement healthcheck. Accept 400s as a workaround
+      {validateStatus: function (status) { return status >= 200 && status < 500;}})
       .then(() => {
         logger.info("Server is up.");
-        win.loadFile('build/index.html');
-        win.webContents.openDevTools(); //helpful for debugging. TODO: remove in prod.
-    })
+        win.loadURL(`${baseUrl}/assets/index.html`);
+        //Devtools helpful for debugging. TODO: remove in prod.
+        win.webContents.openDevTools();})
       .catch(e => {
         if (e.code === 'ECONNREFUSED') {
           if (checkCount < MAX_CHECK_COUNT) {
@@ -112,7 +112,14 @@ function quitOnError(title, content) {
 
 app.whenReady().then(function() {
   createWindow();
-  startServer();
+  // Get port in the dynamic port range for now; RFC6335
+  findPort(49152, function(error, freePort) {
+    if (!error) {
+      startServer(freePort);
+    } else {
+      quitOnError("Server Error", "Failed to find free port.")
+    }
+  });
 })
 
 app.on('window-all-closed', () => {
@@ -121,11 +128,19 @@ app.on('window-all-closed', () => {
   }
 })
 
-app.on('activate', () => { //TODO: Fix this flow now that window loading logic has changed.
+app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
     if (!serverProcess) {
-      startServer();
+      findPort(49152, function(error, freePort) {
+        if (!error) {
+          startServer(freePort);
+        } else {
+          quitOnError("Server Error", "Failed to find free port.")
+        }
+      });
+    } else {
+      win.loadURL(`${baseUrl}/assets/index.html`);
     }
   }
 })

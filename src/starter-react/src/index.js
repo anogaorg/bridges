@@ -5,9 +5,17 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 
+//Testing APIs
+axios.get(
+  `/v1/api/users`
+)
+.then((data) => {
+  console.log(data.data);
+  console.log(data);
+}).catch((e) => {console.log("woops"); console.log(e);})
 
 axios.get(
-  "http://localhost:8080/users"
+  `/users`
 )
 .then((data) => {
   console.log(data.data);

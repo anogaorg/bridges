@@ -93,5 +93,10 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit val syst
       }
     }
 
-  val allRoutes: Route = concat(userRoutes, shutdownRoute)
+  val filez: Route =
+    path("assets" / Segments) { filepath =>
+      getFromResource(s"build/${filepath.mkString("/")}")
+    }
+
+  val allRoutes: Route = concat(filez, userRoutes, shutdownRoute)
 }
