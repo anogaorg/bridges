@@ -5,6 +5,16 @@
   "private": true,
   "homepage": "./",
   "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anogaorg/bridges.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anogaorg/bridges/issues"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
