@@ -106,7 +106,11 @@ dist
 # Output
 out/
 target/
+build/
 
 # IntelliJ
 .idea/
 .bsp
+
+#OS Shenanigans
+.DS_Store
