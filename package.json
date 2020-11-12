@@ -1,9 +1,20 @@
 {
-  "name": "starter-react",
+  "name": "bridges",
   "version": "0.1.0",
+  "description": "Integrate sporadic workflows",
   "private": true,
   "homepage": "./",
   "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anogaorg/bridges.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anogaorg/bridges/issues"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
@@ -62,14 +73,13 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "ignore": [
-        ]
+        "ignore": []
       },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "starter_react"
+            "name": "bridges"
           }
         },
         {
