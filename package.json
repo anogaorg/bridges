@@ -1,0 +1,92 @@
+{
+  "name": "starter-react",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "./",
+  "main": "main.js",
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.5",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "axios": "^0.21.0",
+    "electron-log": "^4.3.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "find-free-port": "^2.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.0",
+    "tree-kill": "^1.2.2",
+    "web-vitals": "^0.2.4"
+  },
+  "scripts": {
+    "rx-start": "react-scripts start",
+    "rx-build": "react-scripts build",
+    "rx-test": "react-scripts test",
+    "rx-eject": "react-scripts eject",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "server-build": "sbt clean assembly",
+    "build": "npm-run-all remove-from-resources rx-build move-to-resources server-build start",
+    "move-to-resources": "mv -f build src/main/resources",
+    "remove-from-resources": "rm -rf src/main/resources/build",
+    "make-all": "npm-run-all remove-from-resources rx-build move-to-resources server-build make"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.54",
+    "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
+    "electron": "^10.1.5",
+    "npm-run-all": "^4.1.5"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "ignore": [
+        ]
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "starter_react"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
+  }
+}
