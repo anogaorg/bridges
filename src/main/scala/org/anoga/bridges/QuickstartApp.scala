@@ -4,6 +4,8 @@ import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
+import akka.management.scaladsl.AkkaManagement
+import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.util.Failure
 import scala.util.Success
@@ -29,6 +31,7 @@ object QuickstartApp {
   //#start-http-server
   def main(args: Array[String]): Unit = {
     //#server-bootstrapping
+    val managementPort: Int = System.getProperty("management.overridePort", "0").toInt
     val rootBehavior = Behaviors.setup[Nothing] { context =>
       val userRegistryActor = context.spawn(UserRegistry(), "UserRegistryActor")
       context.watch(userRegistryActor)
@@ -38,8 +41,18 @@ object QuickstartApp {
 
       Behaviors.empty
     }
-    val system = ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer")
+
+    val config: Config = ConfigFactory
+      .parseString(s"akka.management.http.port=$managementPort")
+      .withFallback(ConfigFactory.load())
+      .resolve()
+
+    val system =
+      if (managementPort != 0) ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer", config)
+      else ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer")
+
     //#server-bootstrapping
+    AkkaManagement(system).start()
   }
 }
 //#main-class

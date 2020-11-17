@@ -33,13 +33,18 @@ function createWindow () {
   });
 }
 
-function startServer(port) {
+function startServer(port, port2) {
   logger.info(`Starting server ...`);
   const server = `${path.join(app.getAppPath(), 'target', '**', JAR)}`;
   
   logger.info(`Launching server with jar ${server} ...`);
   serverProcess = require('child_process')
-        .spawn('java', [`-Dservice.overridePort=${port}`, '-jar', server], {shell: true});
+        .spawn('java', 
+        [`-Dservice.overridePort=${port}`,
+          `-Dmanagement.overridePort=${port2}`, 
+          '-jar', 
+          server], 
+        {shell: true});
 
   serverProcess.stdout.on('data', logger.server);
 
@@ -49,15 +54,15 @@ function startServer(port) {
     logger.info("Server PID: " + serverProcess.pid);
     checkCount = 0
     setTimeout(function cycle() {
-      axios.get(`${baseUrl}`,
-      //TODO Implement healthcheck. Accept 400s as a workaround
-      {validateStatus: function (status) { return status >= 200 && status < 500;}})
+      axios.get(`http://localhost:${port2}/ready`
+   )
       .then(() => {
         logger.info("Server is up.");
         win.loadURL(`${baseUrl}/assets/index.html`);
         //Devtools helpful for debugging. TODO: remove in prod.
         win.webContents.openDevTools();})
       .catch(e => {
+        logger.info("Failed ready health check, retrying")
         if (e.code === 'ECONNREFUSED') {
           if (checkCount < MAX_CHECK_COUNT) {
             checkCount++;
@@ -113,9 +118,9 @@ function quitOnError(title, content) {
 app.whenReady().then(function() {
   createWindow();
   // Get port in the dynamic port range for now; RFC6335
-  findPort(49152, function(error, freePort) {
+  findPort(49152, 65533, "localhost", 2, function(error, freePort,fp2) {
     if (!error) {
-      startServer(freePort);
+      startServer(freePort, fp2);
     } else {
       quitOnError("Server Error", "Failed to find free port.")
     }
@@ -132,9 +137,9 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
     if (!serverProcess) {
-      findPort(49152, function(error, freePort) {
+      findPort(49152, 65533, "localhost", 2, function(error, freePort,fp2) {
         if (!error) {
-          startServer(freePort);
+          startServer(freePort, fp2);
         } else {
           quitOnError("Server Error", "Failed to find free port.")
         }

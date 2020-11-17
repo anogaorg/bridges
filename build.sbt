@@ -1,5 +1,6 @@
 lazy val akkaHttpVersion = "10.2.1"
 lazy val akkaVersion    = "2.6.10"
+lazy val AkkaManagementVersion = "1.0.9"
 
 lazy val root = (project in file(".")).
   settings(
@@ -14,6 +15,7 @@ lazy val root = (project in file(".")).
       "com.typesafe.akka" %% "akka-actor-typed"         % akkaVersion,
       "com.typesafe.akka" %% "akka-stream"              % akkaVersion,
       "ch.qos.logback"    % "logback-classic"           % "1.2.3",
+      "com.lightbend.akka.management" %% "akka-management" % AkkaManagementVersion,
 
       "com.typesafe.akka" %% "akka-http-testkit"        % akkaHttpVersion % Test,
       "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion     % Test,
